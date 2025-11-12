@@ -1,0 +1,598 @@
+// Sean Guillermo AIO Tools - SEO Checker v2.0 - Popup Script
+
+let currentAnalysis = null;
+let currentTabId = null;
+let currentUrl = null;
+
+// Initialize
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    currentTabId = tab.id;
+    currentUrl = tab.url;
+    
+    document.getElementById('currentUrl').textContent = currentUrl;
+    
+    // Load theme preference
+    const { theme } = await chrome.storage.local.get('theme');
+    if (theme === 'light') {
+      document.body.classList.add('light-mode');
+    }
+    
+    await loadAnalysis();
+    setupEventListeners();
+  } catch (error) {
+    console.error('Init error:', error);
+    showError('Failed to initialize');
+  }
+});
+
+function setupEventListeners() {
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+  });
+  
+  // Reanalyze
+  document.getElementById('reanalyzeBtn')?.addEventListener('click', async () => {
+    chrome.runtime.sendMessage({ action: 'reanalyze', tabId: currentTabId });
+    showLoading();
+    setTimeout(() => loadAnalysis(), 2000);
+  });
+  
+  // Headings
+  document.getElementById('toggleHeadings')?.addEventListener('click', () => {
+    chrome.tabs.sendMessage(currentTabId, { action: 'toggleHeadings' });
+  });
+  
+  // Links
+  document.getElementById('toggleLinks')?.addEventListener('click', () => {
+    chrome.tabs.sendMessage(currentTabId, { action: 'toggleLinks' });
+  });
+  
+  document.getElementById('copyLinksBtn')?.addEventListener('click', copyLinks);
+  document.getElementById('downloadLinksBtn')?.addEventListener('click', downloadLinksCSV);
+  
+  // Sitemap
+  document.getElementById('selectAllSitemap')?.addEventListener('change', (e) => {
+    document.querySelectorAll('.sitemap-item input[type="checkbox"]').forEach(cb => {
+      cb.checked = e.target.checked;
+    });
+  });
+  
+  document.getElementById('copySitemapBtn')?.addEventListener('click', copySitemapURLs);
+  document.getElementById('downloadSitemapBtn')?.addEventListener('click', downloadSitemapCSV);
+  document.getElementById('highlightSelectedBtn')?.addEventListener('click', highlightSelected);
+  
+  // Settings
+  document.getElementById('settingsBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    chrome.runtime.openOptionsPage();
+  });
+}
+
+function switchTab(tabName) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  
+  document.querySelector(`[data-tab="${tabName}"]`)?.classList.add('active');
+  document.getElementById(tabName)?.classList.add('active');
+}
+
+async function loadAnalysis() {
+  try {
+    const key = `analysis_${currentTabId}`;
+    const result = await chrome.storage.local.get(key);
+    
+    if (result[key]) {
+      currentAnalysis = result[key];
+      displayAnalysis(currentAnalysis);
+    } else {
+      showEmptyState();
+    }
+  } catch (error) {
+    console.error('Load error:', error);
+    showError('Failed to load analysis');
+  }
+}
+
+function displayAnalysis(analysis) {
+  if (!analysis) {
+    showEmptyState();
+    return;
+  }
+  
+  updateScore(analysis.score || 0);
+  updateMetaTab(analysis);
+  updateHeadingsTab(analysis);
+  updateLinksTab(analysis);
+  updateImagesTab(analysis);
+  updateSchemaTab(analysis);
+  updateSitemapTab(analysis);
+  updateBadges(analysis);
+}
+
+function updateScore(score) {
+  document.getElementById('scoreValue').textContent = Math.round(score);
+}
+
+function updateMetaTab(analysis) {
+  // Robots status
+  const robotsIndexable = document.getElementById('robotsIndexable');
+  const robotsFollowable = document.getElementById('robotsFollowable');
+  const robotsDetails = document.getElementById('robotsDetails');
+  
+  const robots = analysis.overview?.robots || '';
+  const isNoindex = robots.toLowerCase().includes('noindex');
+  const isNofollow = robots.toLowerCase().includes('nofollow');
+  
+  if (robotsIndexable) {
+    robotsIndexable.textContent = isNoindex ? 'NOINDEX' : 'INDEX';
+    robotsIndexable.className = `robots-badge ${isNoindex ? 'noindex' : 'indexable'}`;
+  }
+  
+  if (robotsFollowable) {
+    robotsFollowable.textContent = isNofollow ? 'NOFOLLOW' : 'FOLLOW';
+    robotsFollowable.className = `robots-badge ${isNofollow ? 'nofollow' : 'followable'}`;
+  }
+  
+  if (robotsDetails) {
+    robotsDetails.textContent = robots || 'No robots meta tag found';
+  }
+  
+  // Title
+  const metaTitle = document.getElementById('metaTitle');
+  const titleLength = document.getElementById('titleLength');
+  const titleStatus = document.getElementById('titleStatus');
+  
+  if (metaTitle && analysis.overview) {
+    metaTitle.textContent = analysis.overview.title || 'Not set';
+    const len = analysis.overview.titleLength || 0;
+    if (titleLength) titleLength.textContent = len;
+    if (titleStatus) {
+      if (len === 0) {
+        titleStatus.textContent = 'Missing';
+        titleStatus.className = 'metric-status danger';
+      } else if (len < 30 || len > 60) {
+        titleStatus.textContent = 'Not optimal';
+        titleStatus.className = 'metric-status warning';
+      } else {
+        titleStatus.textContent = 'Good';
+        titleStatus.className = 'metric-status success';
+      }
+    }
+  }
+  
+  // Description
+  const metaDescription = document.getElementById('metaDescription');
+  const descLength = document.getElementById('descLength');
+  const descStatus = document.getElementById('descStatus');
+  
+  if (metaDescription && analysis.overview) {
+    metaDescription.textContent = analysis.overview.description || 'Not set';
+    const len = analysis.overview.descriptionLength || 0;
+    if (descLength) descLength.textContent = len;
+    if (descStatus) {
+      if (len === 0) {
+        descStatus.textContent = 'Missing';
+        descStatus.className = 'metric-status danger';
+      } else if (len < 120 || len > 160) {
+        descStatus.textContent = 'Not optimal';
+        descStatus.className = 'metric-status warning';
+      } else {
+        descStatus.textContent = 'Good';
+        descStatus.className = 'metric-status success';
+      }
+    }
+  }
+  
+  // Canonical
+  const metaCanonical = document.getElementById('metaCanonical');
+  if (metaCanonical && analysis.overview) {
+    metaCanonical.textContent = analysis.overview.canonical || 'Not set';
+  }
+  
+  // Word count
+  const wordCount = document.getElementById('wordCount');
+  if (wordCount && analysis.content) {
+    wordCount.textContent = analysis.content.wordCount || 0;
+  }
+  
+  // Load time
+  const loadTime = document.getElementById('loadTime');
+  if (loadTime && analysis.performance) {
+    loadTime.textContent = (analysis.performance.loadTime || 0) + 'ms';
+  }
+  
+  // Issues by category
+  const issuesList = document.getElementById('issuesList');
+  if (issuesList && analysis.issues) {
+    issuesList.innerHTML = '';
+    
+    const categories = {
+      'Meta Tags': [],
+      'Content': [],
+      'Links': [],
+      'Images': [],
+      'Technical': []
+    };
+    
+    // Categorize issues
+    (analysis.issues.errors || []).forEach(issue => {
+      if (issue.includes('title') || issue.includes('description')) {
+        categories['Meta Tags'].push({ type: 'error', text: issue });
+      } else if (issue.includes('H1') || issue.includes('word')) {
+        categories['Content'].push({ type: 'error', text: issue });
+      } else if (issue.includes('link')) {
+        categories['Links'].push({ type: 'error', text: issue });
+      } else if (issue.includes('image') || issue.includes('alt')) {
+        categories['Images'].push({ type: 'error', text: issue });
+      } else {
+        categories['Technical'].push({ type: 'error', text: issue });
+      }
+    });
+    
+    (analysis.issues.warnings || []).forEach(issue => {
+      if (issue.includes('title') || issue.includes('description')) {
+        categories['Meta Tags'].push({ type: 'warning', text: issue });
+      } else if (issue.includes('H1') || issue.includes('word')) {
+        categories['Content'].push({ type: 'warning', text: issue });
+      } else if (issue.includes('link')) {
+        categories['Links'].push({ type: 'warning', text: issue });
+      } else if (issue.includes('image') || issue.includes('alt')) {
+        categories['Images'].push({ type: 'warning', text: issue });
+      } else {
+        categories['Technical'].push({ type: 'warning', text: issue });
+      }
+    });
+    
+    let hasIssues = false;
+    Object.entries(categories).forEach(([category, issues]) => {
+      if (issues.length > 0) {
+        hasIssues = true;
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'issue-category';
+        categoryDiv.innerHTML = `<div class="issue-category-title">${category} (${issues.length})</div>`;
+        
+        issues.forEach(issue => {
+          const item = document.createElement('div');
+          item.className = `issue-item ${issue.type}`;
+          item.textContent = issue.text;
+          categoryDiv.appendChild(item);
+        });
+        
+        issuesList.appendChild(categoryDiv);
+      }
+    });
+    
+    if (!hasIssues) {
+      issuesList.innerHTML = '<div class="empty-state">No issues found! ✓</div>';
+    }
+  }
+}
+
+function updateHeadingsTab(analysis) {
+  const headingsOutline = document.getElementById('headingsOutline');
+  if (!headingsOutline || !analysis.content || !analysis.content.headings) {
+    if (headingsOutline) {
+      headingsOutline.innerHTML = '<div class="empty-state">No headings found</div>';
+    }
+    return;
+  }
+  
+  headingsOutline.innerHTML = '';
+  
+  const headingLevels = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+  let totalHeadings = 0;
+  const hasH1 = (analysis.content.headings.h1 || []).length > 0;
+  
+  headingLevels.forEach(level => {
+    const headings = analysis.content.headings[level] || [];
+    headings.forEach((heading, index) => {
+      const item = document.createElement('div');
+      item.className = 'heading-item';
+      if (level === 'h1') {
+        item.classList.add(hasH1 ? 'h1-present' : 'h1-missing');
+      }
+      item.style.paddingLeft = (parseInt(level.charAt(1)) - 1) * 12 + 'px';
+      item.innerHTML = `
+        <span class="heading-tag ${level}">${level.toUpperCase()}</span>
+        <span class="heading-text">${heading.text || '(empty)'}</span>
+      `;
+      
+      // Click to jump to heading
+      item.addEventListener('click', () => {
+        chrome.tabs.sendMessage(currentTabId, {
+          action: 'jumpToHeading',
+          level: level,
+          index: index
+        });
+      });
+      
+      headingsOutline.appendChild(item);
+      totalHeadings++;
+    });
+  });
+  
+  if (totalHeadings === 0) {
+    headingsOutline.innerHTML = '<div class="empty-state">No headings found</div>';
+  }
+}
+
+function updateLinksTab(analysis) {
+  if (!analysis.links) return;
+  
+  // Metrics
+  document.getElementById('totalLinks').textContent = analysis.links.total || 0;
+  document.getElementById('internalLinks').textContent = analysis.links.internal || 0;
+  document.getElementById('externalLinks').textContent = analysis.links.external || 0;
+  document.getElementById('nofollowLinks').textContent = analysis.links.nofollow || 0;
+  
+  // Links list
+  const linksList = document.getElementById('linksList');
+  if (linksList && analysis.links.details) {
+    linksList.innerHTML = '';
+    
+    const links = analysis.links.details.slice(0, 50);
+    
+    if (links.length === 0) {
+      linksList.innerHTML = '<div class="empty-state">No links found</div>';
+    } else {
+      links.forEach(link => {
+        // Skip email and tel links from error display
+        const isSpecialLink = link.href.startsWith('mailto:') || link.href.startsWith('tel:');
+        
+        const item = document.createElement('div');
+        item.className = 'link-item';
+        const type = link.isInternal ? 'Internal' : 'External';
+        const nofollow = link.rel && link.rel.includes('nofollow') ? ' · nofollow' : '';
+        const status = link.status ? `<span class="link-status status-${link.status}">${link.status}</span>` : '';
+        
+        item.innerHTML = `
+          <div class="link-url">${link.href}</div>
+          <div class="link-meta">${status} ${type}${nofollow} · ${(link.text || 'No text').substring(0, 50)}</div>
+        `;
+        linksList.appendChild(item);
+      });
+      
+      if (analysis.links.total > 50) {
+        const more = document.createElement('div');
+        more.className = 'empty-state';
+        more.textContent = `... and ${analysis.links.total - 50} more links`;
+        linksList.appendChild(more);
+      }
+    }
+  }
+}
+
+function updateImagesTab(analysis) {
+  if (!analysis.images) return;
+  
+  document.getElementById('totalImages').textContent = analysis.images.total || 0;
+  document.getElementById('imagesNoAlt').textContent = analysis.images.withoutAlt || 0;
+  
+  const imagesList = document.getElementById('imagesList');
+  if (imagesList && analysis.images.details) {
+    imagesList.innerHTML = '';
+    
+    const images = analysis.images.details.slice(0, 20);
+    
+    if (images.length === 0) {
+      imagesList.innerHTML = '<div class="empty-state">No images found</div>';
+    } else {
+      images.forEach(img => {
+        const item = document.createElement('div');
+        item.className = 'image-item';
+        const altStatus = img.alt ? '✓ Has alt' : '❌ Missing alt';
+        const altClass = img.alt ? 'success' : 'danger';
+        item.innerHTML = `
+          <div class="image-preview">
+            <img src="${img.src}" alt="${img.alt || 'No alt'}" onerror="this.style.display='none'">
+          </div>
+          <div class="image-info">
+            <div class="image-url">${img.src.substring(0, 60)}...</div>
+            <div class="image-meta metric-status ${altClass}">${altStatus}</div>
+          </div>
+        `;
+        imagesList.appendChild(item);
+      });
+      
+      if (analysis.images.total > 20) {
+        const more = document.createElement('div');
+        more.className = 'empty-state';
+        more.textContent = `... and ${analysis.images.total - 20} more images`;
+        imagesList.appendChild(more);
+      }
+    }
+  }
+}
+
+function updateSchemaTab(analysis) {
+  const schemaInfo = document.getElementById('schemaInfo');
+  if (!schemaInfo) return;
+  
+  if (!analysis.schema || !analysis.schema.found) {
+    schemaInfo.innerHTML = '<div class="empty-state">No structured data found</div>';
+    return;
+  }
+  
+  schemaInfo.innerHTML = '';
+  
+  const card = document.createElement('div');
+  card.className = 'metric-card';
+  card.innerHTML = `
+    <div class="metric-label">Schema Types Found</div>
+    <div class="metric-value">${analysis.schema.types?.length || 0}</div>
+    <div class="metric-status success">Structured data detected</div>
+  `;
+  schemaInfo.appendChild(card);
+  
+  if (analysis.schema.types && analysis.schema.types.length > 0) {
+    analysis.schema.types.forEach(type => {
+      const typeItem = document.createElement('div');
+      typeItem.className = 'schema-type';
+      typeItem.textContent = type;
+      schemaInfo.appendChild(typeItem);
+    });
+  }
+}
+
+function updateSitemapTab(analysis) {
+  // For now, show placeholder - full sitemap parsing would require fetching sitemap.xml
+  const sitemapTree = document.getElementById('sitemapTree');
+  if (sitemapTree) {
+    sitemapTree.innerHTML = '<div class="empty-state">Sitemap analysis coming soon. Click "Reanalyze" to check for sitemap.</div>';
+  }
+  
+  document.getElementById('sitemapTotal').textContent = '--';
+  document.getElementById('sitemapPages').textContent = '--';
+  document.getElementById('sitemapOther').textContent = '--';
+}
+
+function updateBadges(analysis) {
+  if (!analysis.issues) return;
+  
+  const errorCount = (analysis.issues.errors || []).length;
+  const warningCount = (analysis.issues.warnings || []).length;
+  const totalIssues = errorCount + warningCount;
+  
+  // Only show badges if there are issues
+  const metaBadge = document.getElementById('metaBadge');
+  if (metaBadge) {
+    if (totalIssues > 0) {
+      metaBadge.textContent = totalIssues;
+      metaBadge.classList.add('show');
+    } else {
+      metaBadge.classList.remove('show');
+    }
+  }
+  
+  // Headings badge
+  const headingsBadge = document.getElementById('headingsBadge');
+  if (headingsBadge && analysis.content && analysis.content.headings) {
+    const h1Count = (analysis.content.headings.h1 || []).length;
+    if (h1Count === 0 || h1Count > 1) {
+      headingsBadge.textContent = h1Count === 0 ? '!' : h1Count;
+      headingsBadge.classList.add('show');
+    } else {
+      headingsBadge.classList.remove('show');
+    }
+  }
+  
+  // Images badge
+  const imagesBadge = document.getElementById('imagesBadge');
+  if (imagesBadge && analysis.images) {
+    const imageIssues = analysis.images.withoutAlt || 0;
+    if (imageIssues > 0) {
+      imagesBadge.textContent = imageIssues;
+      imagesBadge.classList.add('show');
+    } else {
+      imagesBadge.classList.remove('show');
+    }
+  }
+}
+
+// Copy links to clipboard
+async function copyLinks() {
+  if (!currentAnalysis || !currentAnalysis.links || !currentAnalysis.links.details) {
+    alert('No links to copy');
+    return;
+  }
+  
+  const urls = currentAnalysis.links.details
+    .filter(link => !link.href.startsWith('mailto:') && !link.href.startsWith('tel:'))
+    .map(link => link.href)
+    .join('\n');
+  
+  try {
+    await navigator.clipboard.writeText(urls);
+    alert(`${currentAnalysis.links.details.length} URLs copied to clipboard!`);
+  } catch (error) {
+    console.error('Copy failed:', error);
+    alert('Failed to copy URLs');
+  }
+}
+
+// Download links as CSV
+function downloadLinksCSV() {
+  if (!currentAnalysis || !currentAnalysis.links || !currentAnalysis.links.details) {
+    alert('No links to download');
+    return;
+  }
+  
+  const csv = 'URL,Type,Rel,Text\n' + currentAnalysis.links.details
+    .map(link => `"${link.href}","${link.isInternal ? 'Internal' : 'External'}","${link.rel || ''}","${(link.text || '').replace(/"/g, '""')}"`)
+    .join('\n');
+  
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `links-${new Date().getTime()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Copy sitemap URLs
+async function copySitemapURLs() {
+  const selected = Array.from(document.querySelectorAll('.sitemap-item input[type="checkbox"]:checked'))
+    .map(cb => cb.dataset.url)
+    .join('\n');
+  
+  if (!selected) {
+    alert('No URLs selected');
+    return;
+  }
+  
+  try {
+    await navigator.clipboard.writeText(selected);
+    alert('Selected URLs copied!');
+  } catch (error) {
+    alert('Failed to copy');
+  }
+}
+
+// Download sitemap as CSV
+function downloadSitemapCSV() {
+  alert('Sitemap download coming soon');
+}
+
+// Highlight selected sitemap URLs
+function highlightSelected() {
+  const selected = Array.from(document.querySelectorAll('.sitemap-item input[type="checkbox"]:checked'))
+    .map(cb => cb.dataset.url);
+  
+  if (selected.length === 0) {
+    alert('No URLs selected');
+    return;
+  }
+  
+  chrome.tabs.sendMessage(currentTabId, {
+    action: 'highlightURLs',
+    urls: selected
+  });
+}
+
+function showLoading() {
+  document.getElementById('scoreValue').textContent = '...';
+  const issuesList = document.getElementById('issuesList');
+  if (issuesList) {
+    issuesList.innerHTML = '<div class="empty-state">Analyzing page...</div>';
+  }
+}
+
+function showEmptyState() {
+  document.getElementById('scoreValue').textContent = '--';
+  const issuesList = document.getElementById('issuesList');
+  if (issuesList) {
+    issuesList.innerHTML = '<div class="empty-state">Click "Reanalyze Page" to start analysis</div>';
+  }
+}
+
+function showError(message) {
+  const issuesList = document.getElementById('issuesList');
+  if (issuesList) {
+    issuesList.innerHTML = `<div class="empty-state" style="color:var(--danger)">${message}</div>`;
+  }
+}
+

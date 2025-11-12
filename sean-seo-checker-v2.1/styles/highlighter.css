@@ -1,0 +1,49 @@
+/* SEO Checker Pro - On-Page Highlighting Styles */
+
+.seo-checker-heading {
+  position: relative !important;
+  outline: 2px solid currentColor !important;
+  outline-offset: 4px !important;
+  border-radius: 4px !important;
+}
+
+.seo-checker-h1 {
+  outline-color: #eb5757 !important;
+  background-color: rgba(235, 87, 87, 0.1) !important;
+}
+
+.seo-checker-h2 {
+  outline-color: #f2994a !important;
+  background-color: rgba(242, 153, 74, 0.1) !important;
+}
+
+.seo-checker-h3 {
+  outline-color: #f2c94c !important;
+  background-color: rgba(242, 201, 76, 0.1) !important;
+}
+
+.seo-checker-h4 {
+  outline-color: #6fcf97 !important;
+  background-color: rgba(111, 207, 151, 0.1) !important;
+}
+
+.seo-checker-h5 {
+  outline-color: #56ccf2 !important;
+  background-color: rgba(86, 204, 242, 0.1) !important;
+}
+
+.seo-checker-h6 {
+  outline-color: #9b51e0 !important;
+  background-color: rgba(155, 81, 224, 0.1) !important;
+}
+
+.seo-checker-link {
+  position: relative !important;
+}
+
+.seo-checker-label,
+.seo-checker-link-label {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  pointer-events: none !important;
+}
+

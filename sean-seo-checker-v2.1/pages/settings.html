@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Sean Guillermo AIO Tools</title>
+  <link rel="stylesheet" href="../styles/settings.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand-logo">S</div>
+      <h1>Sean Guillermo AIO Tools</h1>
+      <p>SEO Checker Settings</p>
+    </header>
+
+    <main>
+      <section class="settings-section">
+        <h2>Appearance</h2>
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="theme">Theme</label>
+            <p class="setting-description">Choose your preferred color theme</p>
+          </div>
+          <select id="theme" class="setting-control">
+            <option value="dark">Dark Mode</option>
+            <option value="light">Light Mode</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h2>Analysis</h2>
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="autoAnalyze">Auto-analyze pages</label>
+            <p class="setting-description">Automatically analyze pages when they load</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="autoAnalyze" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="cacheEnabled">Enable caching</label>
+            <p class="setting-description">Cache analysis results to avoid re-checking</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="cacheEnabled" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="cacheDuration">Cache duration</label>
+            <p class="setting-description">How long to keep cached results</p>
+          </div>
+          <select id="cacheDuration" class="setting-control">
+            <option value="3600">1 hour</option>
+            <option value="21600">6 hours</option>
+            <option value="86400">24 hours</option>
+            <option value="604800">7 days</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h2>Highlighting</h2>
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="autoHighlightHeadings">Auto-highlight headings</label>
+            <p class="setting-description">Automatically highlight headings on page load</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="autoHighlightHeadings">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="autoHighlightLinks">Auto-highlight links</label>
+            <p class="setting-description">Automatically highlight links on page load</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="autoHighlightLinks">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h2>About</h2>
+        <div class="about-info">
+          <p><strong>Version:</strong> 2.0.0</p>
+          <p><strong>Author:</strong> Sean Guillermo</p>
+          <p><strong>Description:</strong> Comprehensive SEO analysis tool with on-page highlighting, link checking, and real-time insights.</p>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button id="saveBtn" class="btn btn-primary">Save Settings</button>
+        <button id="resetBtn" class="btn btn-secondary">Reset to Defaults</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="../scripts/settings.js"></script>
+</body>
+</html>
+

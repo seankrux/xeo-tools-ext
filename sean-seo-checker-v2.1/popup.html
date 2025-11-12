@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sean Guillermo AIO Tools - SEO Checker</title>
+  <link rel="stylesheet" href="styles/popup.css">
+</head>
+<body>
+  <div class="header">
+    <div class="brand">
+      <div class="brand-logo">S</div>
+      <div class="brand-text">
+        <div class="brand-name">Sean Guillermo AIO Tools</div>
+        <div class="brand-title">SEO Checker</div>
+      </div>
+      <div class="score-compact">
+        <div class="score-value" id="scoreValue">--</div>
+        <div class="score-label">Score</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="url-info">
+    <svg class="url-icon" viewBox="0 0 24 24" fill="none">
+      <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <div class="url-text" id="currentUrl">Loading...</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="meta">Meta<span class="tab-badge" id="metaBadge"></span></button>
+    <button class="tab" data-tab="headings">Headings<span class="tab-badge" id="headingsBadge"></span></button>
+    <button class="tab" data-tab="links">Links<span class="tab-badge" id="linksBadge"></span></button>
+    <button class="tab" data-tab="images">Images<span class="tab-badge" id="imagesBadge"></span></button>
+    <button class="tab" data-tab="schema">Schema<span class="tab-badge" id="schemaBadge"></span></button>
+    <button class="tab" data-tab="sitemap">Sitemap<span class="tab-badge" id="sitemapBadge"></span></button>
+    <button class="tab" data-tab="dns">DNS<span class="tab-badge" id="dnsBadge"></span></button>
+  </div>
+
+  <div class="content">
+    <!-- Meta Tab -->
+    <div class="tab-content active" id="meta">
+      <div class="robots-status">
+        <div class="robots-main">
+          <span class="robots-badge" id="robotsIndexable">INDEX</span>
+          <span class="robots-badge" id="robotsFollowable">FOLLOW</span>
+          <a href="#" id="robotsTxtLink" class="robots-file-link" target="_blank">
+            <span class="robots-file-icon">📄</span>
+            <span>robots.txt</span>
+          </a>
+          <a href="#" id="llmsTxtLink" class="robots-file-link" target="_blank">
+            <span class="robots-file-icon">🤖</span>
+            <span>llms.txt</span>
+          </a>
+        </div>
+        <div class="robots-details" id="robotsDetails">Checking...</div>
+      </div>
+
+      <div class="meta-compact">
+        <div class="meta-row">
+          <div class="meta-info-flex">
+            <div class="meta-label">Title</div>
+            <div class="meta-value" id="metaTitle">--</div>
+          </div>
+          <div class="meta-metric-inline">
+            <span class="metric-value" id="titleLength">--</span>
+            <span class="metric-status" id="titleStatus">--</span>
+          </div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-info-flex">
+            <div class="meta-label">Description</div>
+            <div class="meta-value" id="metaDescription">--</div>
+          </div>
+          <div class="meta-metric-inline">
+            <span class="metric-value" id="descLength">--</span>
+            <span class="metric-status" id="descStatus">--</span>
+          </div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-info-flex">
+            <div class="meta-label">Canonical</div>
+            <div class="meta-value" id="metaCanonical">--</div>
+          </div>
+        </div>
+        <div class="meta-grid-small">
+          <div class="meta-stat">
+            <span class="meta-label">Words</span>
+            <span class="meta-value" id="wordCount">--</span>
+          </div>
+          <div class="meta-stat">
+            <span class="meta-label">Load</span>
+            <span class="meta-value" id="loadTime">--</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="section-title">Issues by Category</div>
+      <div id="issuesList" class="issues-list"></div>
+      
+      <button class="btn btn-primary" id="reanalyzeBtn">
+        <svg viewBox="0 0 24 24" fill="none" style="width:14px;height:14px">
+          <path d="M1 4v6h6M23 20v-6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Reanalyze Page
+      </button>
+    </div>
+
+    <!-- Headings Tab -->
+    <div class="tab-content" id="headings">
+      <div class="section-header">
+        <div class="section-title">Headings Outline</div>
+        <button class="btn btn-secondary btn-sm" id="toggleHeadings">Highlight All</button>
+      </div>
+      <div id="headingsOutline" class="headings-outline"></div>
+    </div>
+
+    <!-- Links Tab -->
+    <div class="tab-content" id="links">
+      <div class="section-header">
+        <div class="section-title">Links Analysis</div>
+        <div class="links-actions">
+          <button class="btn btn-secondary btn-sm" id="filterLinksBtn">Filter</button>
+          <button class="btn btn-secondary btn-sm" id="copyLinksBtn">Copy</button>
+          <button class="btn btn-secondary btn-sm" id="downloadLinksBtn">CSV</button>
+          <button class="btn btn-secondary btn-sm" id="toggleLinks">Scan & Highlight</button>
+        </div>
+      </div>
+      <div class="filter-options" id="linksFilter" style="display:none">
+        <label><input type="radio" name="linkFilter" value="all" checked> All</label>
+        <label><input type="radio" name="linkFilter" value="issues"> Issues Only</label>
+        <label><input type="radio" name="linkFilter" value="internal"> Internal</label>
+        <label><input type="radio" name="linkFilter" value="external"> External</label>
+        <label><input type="radio" name="linkFilter" value="nofollow"> Nofollow</label>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="metric-label">Total</div><div class="metric-value" id="totalLinks">--</div></div>
+        <div class="metric-card"><div class="metric-label">Internal</div><div class="metric-value" id="internalLinks">--</div></div>
+        <div class="metric-card"><div class="metric-label">External</div><div class="metric-value" id="externalLinks">--</div></div>
+        <div class="metric-card"><div class="metric-label">Nofollow</div><div class="metric-value" id="nofollowLinks">--</div></div>
+      </div>
+      <div id="linksList" class="links-list"></div>
+    </div>
+
+    <!-- Images Tab -->
+    <div class="tab-content" id="images">
+      <div class="section-header">
+        <div class="section-title">Images Analysis</div>
+        <div class="links-actions">
+          <button class="btn btn-secondary btn-sm" id="filterImagesBtn">Missing Alt</button>
+          <button class="btn btn-secondary btn-sm" id="selectAllImagesBtn">Select All</button>
+          <button class="btn btn-secondary btn-sm" id="downloadAllImagesBtn">Download All</button>
+        </div>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="metric-label">Total</div><div class="metric-value" id="totalImages">--</div></div>
+        <div class="metric-card"><div class="metric-label">Missing Alt</div><div class="metric-value" id="imagesNoAlt">--</div></div>
+      </div>
+      <div id="imagesList" class="images-list"></div>
+    </div>
+
+    <!-- Schema Tab -->
+    <div class="tab-content" id="schema">
+      <div class="section-header">
+        <div class="section-title">Structured Data</div>
+        <div class="links-actions">
+          <button class="btn btn-secondary btn-sm" id="validateSchemaBtn">Schema.org</button>
+          <button class="btn btn-secondary btn-sm" id="validateRichBtn">Rich Results</button>
+          <button class="btn btn-secondary btn-sm" id="validateBothBtn">Both</button>
+        </div>
+      </div>
+      <div id="schemaInfo" class="schema-info"></div>
+    </div>
+
+    <!-- Sitemap Tab -->
+    <div class="tab-content" id="sitemap">
+      <div class="section-header">
+        <div class="section-title">Sitemap URLs</div>
+        <div class="links-actions">
+          <button class="btn btn-secondary btn-sm" id="analyzeSitemapBtn">Analyze</button>
+          <button class="btn btn-secondary btn-sm" id="copySitemapBtn">Copy</button>
+          <button class="btn btn-secondary btn-sm" id="downloadSitemapBtn">CSV</button>
+        </div>
+      </div>
+      <div class="sitemap-stats">
+        <span>Total: <strong id="sitemapTotal">--</strong></span> · 
+        <span>Pages: <strong id="sitemapPages">--</strong></span> · 
+        <span>Other: <strong id="sitemapOther">--</strong></span>
+      </div>
+      <div class="sitemap-controls">
+        <label><input type="checkbox" id="selectAllSitemap"> Select All</label>
+        <button class="btn btn-secondary btn-sm" id="highlightSelectedBtn">Highlight</button>
+      </div>
+      <div id="sitemapTree" class="sitemap-tree"></div>
+    </div>
+
+    <!-- DNS Tab -->
+    <div class="tab-content" id="dns">
+      <div class="section-title">DNS & Domain Information</div>
+      <div id="dnsInfo" class="dns-info">
+        <div class="dns-card">
+          <div class="dns-label">IP Address</div>
+          <div class="dns-value" id="dnsIP">--</div>
+          <button class="btn-copy" data-copy="dnsIP">Copy</button>
+        </div>
+        <div class="dns-card">
+          <div class="dns-label">Location</div>
+          <div class="dns-value" id="dnsLocation">--</div>
+        </div>
+        <div class="dns-card">
+          <div class="dns-label">Hosting Provider</div>
+          <div class="dns-value" id="dnsProvider">--</div>
+        </div>
+        <div class="dns-card">
+          <div class="dns-label">Server</div>
+          <div class="dns-value" id="dnsServer">--</div>
+        </div>
+        <div class="dns-card">
+          <div class="dns-label">SSL Certificate</div>
+          <div class="dns-value" id="dnsSSL">--</div>
+        </div>
+        <div class="dns-card">
+          <div class="dns-label">Response Time</div>
+          <div class="dns-value" id="dnsResponseTime">--</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="#" id="settingsBtn">Settings</a> · Powered by <strong>Sean Guillermo AIO Tools</strong>
+  </div>
+
+  <script src="scripts/popup.js"></script>
+</body>
+</html>
+
