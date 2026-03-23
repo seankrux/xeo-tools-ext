@@ -46,15 +46,15 @@ function highlightHeadings() {
   headingLevels.forEach(level => {
     const headings = document.querySelectorAll(level);
     headings.forEach((heading, index) => {
-      heading.classList.add('sg-seo-heading-highlighted');
-      heading.setAttribute('data-sg-heading-level', level);
-      heading.setAttribute('data-sg-heading-index', index);
+      heading.classList.add('xeo-seo-heading-highlighted');
+      heading.setAttribute('data-xeo-heading-level', level);
+      heading.setAttribute('data-xeo-heading-index', index);
       heading.style.outline = `3px solid ${colors[level]}`;
       heading.style.outlineOffset = '2px';
       heading.style.position = 'relative';
       
       const label = document.createElement('span');
-      label.className = 'sg-seo-heading-label';
+      label.className = 'xeo-seo-heading-label';
       label.textContent = level.toUpperCase();
       label.style.cssText = `
         position: absolute;
@@ -77,11 +77,11 @@ function highlightHeadings() {
 }
 
 function removeHeadingsHighlight() {
-  document.querySelectorAll('.sg-seo-heading-highlighted').forEach(heading => {
-    heading.classList.remove('sg-seo-heading-highlighted');
+  document.querySelectorAll('.xeo-seo-heading-highlighted').forEach(heading => {
+    heading.classList.remove('xeo-seo-heading-highlighted');
     heading.style.outline = '';
     heading.style.outlineOffset = '';
-    const label = heading.querySelector('.sg-seo-heading-label');
+    const label = heading.querySelector('.xeo-seo-heading-label');
     if (label) label.remove();
   });
   allHeadings = [];
@@ -110,7 +110,7 @@ function jumpToHeadingByGlobalIndex(globalIndex) {
 }
 
 function jumpToHeading(level, index) {
-  const heading = document.querySelector(`${level}[data-sg-heading-index="${index}"]`) ||
+  const heading = document.querySelector(`${level}[data-xeo-heading-index="${index}"]`) ||
                   document.querySelectorAll(level)[index];
   
   if (heading) {
@@ -152,7 +152,7 @@ function highlightLinks() {
     const isInternal = link.hostname === currentDomain;
     const isNofollow = link.rel && link.rel.includes('nofollow');
     
-    link.classList.add('sg-seo-link-highlighted');
+    link.classList.add('xeo-seo-link-highlighted');
     
     let color = '#10b981';
     let borderStyle = 'solid';
@@ -169,7 +169,7 @@ function highlightLinks() {
     link.style.outlineOffset = '1px';
     
     const label = document.createElement('span');
-    label.className = 'sg-seo-link-label';
+    label.className = 'xeo-seo-link-label';
     label.textContent = isInternal ? 'INT' : 'EXT';
     if (isNofollow) label.textContent += ' NF';
     label.style.cssText = `
@@ -190,11 +190,11 @@ function highlightLinks() {
 }
 
 function removeLinksHighlight() {
-  document.querySelectorAll('.sg-seo-link-highlighted').forEach(link => {
-    link.classList.remove('sg-seo-link-highlighted');
+  document.querySelectorAll('.xeo-seo-link-highlighted').forEach(link => {
+    link.classList.remove('xeo-seo-link-highlighted');
     link.style.outline = '';
     link.style.outlineOffset = '';
-    const label = link.querySelector('.sg-seo-link-label');
+    const label = link.querySelector('.xeo-seo-link-label');
     if (label) label.remove();
   });
 }

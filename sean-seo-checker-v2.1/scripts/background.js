@@ -67,7 +67,7 @@ async function performAnalysis(tabId, url) {
       updateIconBasedOnScore(tabId, analysis.score, analysis.issues);
     }
   } catch (error) {
-    console.error('Analysis error:', error);
+    // Analysis failed for this tab
     updateIconState(tabId, 'error');
   }
 }
