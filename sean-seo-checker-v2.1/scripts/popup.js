@@ -1,4 +1,4 @@
-// Sean Guillermo AIO Tools - SEO Checker v2.1 - Popup Script
+// XEO SEO Checker v2.1 - Popup Script
 
 let currentTabId = null;
 let currentAnalysis = null;

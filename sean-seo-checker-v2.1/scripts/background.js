@@ -1,4 +1,4 @@
-// Sean Guillermo AIO Tools - SEO Checker v2.0 - Background Script
+// XEO SEO Checker v2.0 - Background Script
 
 // Listen for tab updates
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {

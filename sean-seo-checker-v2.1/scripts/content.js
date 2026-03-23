@@ -1,4 +1,4 @@
-// Sean Guillermo AIO Tools - SEO Checker v2.0 - Content Script
+// XEO SEO Checker v2.0 - Content Script
 
 let headingsHighlighted = false;
 let linksHighlighted = false;
