@@ -6,7 +6,6 @@
     <img src="https://img.shields.io/badge/Chrome-Extension-4285F4?style=flat-square&logo=googlechrome&logoColor=white" alt="Chrome Extension" />
     <img src="https://img.shields.io/badge/Manifest-V3-34A853?style=flat-square&logo=google&logoColor=white" alt="Manifest V3" />
     <img src="https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=flat-square&logo=javascript&logoColor=black" alt="JavaScript ES6+" />
-    <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License MIT" />
   </p>
 </div>
 
@@ -157,10 +156,4 @@ Please keep the extension dependency-free and consistent with the existing vanil
 
 ---
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
----
-
-<p align="center">Made with 💛 by Sean G</p>
+<p align="center">Made with 💛 by <a href="https://www.seanguillermo.com"><strong>Sean G</strong></a></p>
