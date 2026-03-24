@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.DS_Store
+*.zip
+*.crx
+*.pem
+*.pdf
+*.log
+.env
+.env.local
+.codacy/

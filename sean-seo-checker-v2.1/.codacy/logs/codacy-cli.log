@@ -1,2 +1,0 @@
-2025-11-27T23:46:05+08:00 [INFO] (codacy-cli-v2/cli-v2.go:27) Starting Codacy CLI version=1.0.0-main.362.sha.6b54110 (6b54110) built at 2025-11-25T14:54:35Z
-2025-11-27T23:46:05+08:00 [INFO] (codacy-cli-v2/cmd/root.go:34) Executing CLI command full_command=[/Users/seanwong/Library/Caches/Codacy/codacy-cli-v2/1.0.0-main.362.sha.6b54110/codacy-cli-v2 init --provider gh --organization seankrux --repository Sean-SEO-Tools --api-token ***] args=[] command=init
