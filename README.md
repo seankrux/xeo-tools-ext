@@ -3,9 +3,9 @@
   <p><strong>Instant, comprehensive on-page SEO analysis built directly into your browser.</strong></p>
 
   <p>
-    <img src="https://img.shields.io/badge/Chrome-Extension-4285F4?style=flat-square&logo=googlechrome&logoColor=white" alt="Chrome Extension" />
-    <img src="https://img.shields.io/badge/Manifest-V3-34A853?style=flat-square&logo=google&logoColor=white" alt="Manifest V3" />
-    <img src="https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=flat-square&logo=javascript&logoColor=black" alt="JavaScript ES6+" />
+    <img src="https://img.shields.io/badge/Chrome-Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Chrome Extension" />
+    <img src="https://img.shields.io/badge/Manifest-V3-34A853?style=for-the-badge&logo=google&logoColor=white" alt="Manifest V3" />
+    <img src="https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript ES6+" />
   </p>
 </div>
 
@@ -17,57 +17,75 @@ XEO Tools is a Chrome extension that delivers real-time SEO intelligence for any
 
 Built for SEO professionals, developers, and content teams who need fast, actionable insights without leaving their workflow.
 
----
+<br>
 
 ## Features
 
 ### SEO Scoring
-- Real-time **0–100 SEO score** calculated per page
-- Color-coded toolbar icon (green / yellow / red) reflects current score
-- Badge counter displays the total number of detected issues
-- Issues categorized as **errors** vs **warnings** for prioritization
+
+> **Real-Time Score** — Live 0–100 SEO score calculated per page as you browse
+
+> **Color-Coded Icon** — Toolbar badge shifts between green, yellow, and red to reflect current score at a glance
+
+> **Issue Counter** — Badge displays the total number of detected issues, categorized as errors vs. warnings for prioritization
 
 ### Meta Analysis
-- Title tag and meta description length validation with character counts
-- Canonical URL detection and display
-- Robots meta tag parsing (`index`/`noindex`, `follow`/`nofollow`)
-- Quick-access links to `robots.txt` and `llms.txt`
-- Word count and page load time metrics
+
+> **Title & Description Validation** — Tag length validation with character counts for both title and meta description
+
+> **Canonical & Robots** — Canonical URL detection, robots meta tag parsing (`index`/`noindex`, `follow`/`nofollow`)
+
+> **Quick Access** — Direct links to `robots.txt` and `llms.txt`, plus word count and page load time metrics
 
 ### Headings Outline
-- Full heading hierarchy rendered in document order (H1–H6)
-- Click any heading to scroll directly to it on the page
-- On-page heading highlighting with color-coded labels per level
-- H1 validation — flags missing or duplicate H1 tags
+
+> **Full Hierarchy** — Complete heading structure rendered in document order (H1–H6)
+
+> **Click-to-Scroll** — Click any heading in the panel to jump directly to it on the page
+
+> **Visual Highlighting** — On-page heading highlighting with color-coded labels per level
+
+> **H1 Validation** — Flags missing or duplicate H1 tags
 
 ### Links Analysis
-- Breakdown of internal, external, and nofollow links
-- Filter view by type: all, issues only, internal, external, nofollow
-- On-page link highlighting with `INT` / `EXT` / `NF` labels
-- Copy all URLs to clipboard or export the full list as CSV
+
+> **Link Breakdown** — Count and categorization of internal, external, and nofollow links
+
+> **Filter View** — Filter by type: all, issues only, internal, external, nofollow
+
+> **On-Page Labels** — Visual overlay with `INT` / `EXT` / `NF` labels on every link
+
+> **Export** — Copy all URLs to clipboard or export the full list as CSV
 
 ### Images Analysis
-- Total image count with missing alt text detection
-- Filter to show only images lacking alt attributes
-- Thumbnail preview for each discovered image
-- Bulk select and download images
+
+> **Alt Text Detection** — Total image count with identification of all images missing alt attributes
+
+> **Thumbnail Preview** — Visual preview panel for every discovered image
+
+> **Bulk Download** — Bulk select and download images directly from the panel
 
 ### Structured Data
-- JSON-LD schema type detection and display
-- One-click validation via **Schema.org Validator**
-- One-click validation via **Google Rich Results Test**
+
+> **Schema Detection** — JSON-LD schema type detection and display
+
+> **One-Click Validation** — Direct links to Schema.org Validator and Google Rich Results Test
 
 ### Sitemap Analysis
-- Automatic sitemap URL detection and parsing
-- Select and highlight sitemap URLs on the current page
-- Copy or export sitemap URLs as CSV
+
+> **Auto-Detection** — Automatic sitemap URL detection and parsing
+
+> **Page Matching** — Select and highlight sitemap URLs present on the current page
+
+> **Export** — Copy or export sitemap URLs as CSV
 
 ### DNS & Domain Info
-- IP address, hosting provider, and server identification
-- SSL certificate status
-- Response time measurement
 
----
+> **Hosting Intelligence** — IP address, hosting provider, and server identification
+
+> **Security & Performance** — SSL certificate status and response time measurement
+
+<br>
 
 ## Installation
 
@@ -81,7 +99,7 @@ XEO Tools is loaded as an unpacked extension during development. No Chrome Web S
 
 > To update after pulling new changes, return to `chrome://extensions/` and click the refresh icon on the XEO Tools card.
 
----
+<br>
 
 ## Usage
 
@@ -92,12 +110,12 @@ XEO Tools is loaded as an unpacked extension during development. No Chrome Web S
 5. Click the **highlight** toggle in any section to overlay visual labels directly on the page.
 6. Use **Copy** or **Export CSV** buttons to extract data from any section.
 
----
+<br>
 
 ## Tech Stack
 
 | Layer | Technology |
-|---|---|
+|-------|-----------|
 | Extension Platform | Chrome Extensions API (Manifest V3) |
 | Language | JavaScript (ES6+) |
 | UI | HTML5 / CSS3 (no framework) |
@@ -106,7 +124,7 @@ XEO Tools is loaded as an unpacked extension during development. No Chrome Web S
 | Storage | Chrome Storage API |
 | Downloads | Chrome Downloads API |
 
----
+<br>
 
 ## Architecture Overview
 
@@ -132,16 +150,16 @@ sean-seo-checker-v2.1/
 3. `background.js` (service worker) tracks navigation events, computes response times, and updates the toolbar badge and icon color.
 4. All user preferences are persisted via the Chrome Storage API — no external servers involved.
 
----
+<br>
 
 ## Versions
 
 | Version | Notes |
-|---|---|
+|---------|-------|
 | `v2.1` | Source code — load unpacked from `sean-seo-checker-v2.1/` |
 | `v2.2` | Packaged release — `sean-seo-checker-v2.2.zip` |
 
----
+<br>
 
 ## Contributing
 
@@ -154,6 +172,8 @@ Contributions, bug reports, and feature suggestions are welcome.
 
 Please keep the extension dependency-free and consistent with the existing vanilla JS / CSS approach.
 
----
+<br>
 
-<p align="center">Made with 💛 by <a href="https://www.seanguillermo.com"><strong>Sean G</strong></a></p>
+<div align="center">
+  <sub>Built by <a href="https://www.seanguillermo.com"><strong>Sean G</strong></a></sub>
+</div>
